@@ -4,12 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
+// packages added
 var mongoose = require('mongoose');
+var methodOverride = require('method-override');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+// methodOverride
+app.use(methodOverride('_method'));
 
 // noSQL connection
 mongoose.connect('mongodb://localhost/clinidam');
@@ -26,6 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// routes
 app.use('/api', index);
 app.use('/api/users', users);
 
