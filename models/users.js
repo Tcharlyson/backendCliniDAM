@@ -1,5 +1,9 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
+var Promise = require('bluebird');
+var jwt = require('jsonwebtoken');
+var express = require('express');
+var router = express.Router();
 
 // create user schema
 var Schema = mongoose.Schema;
@@ -48,7 +52,6 @@ module.exports = {
     return User.remove({ _id: id});
   },
   insertUser : function insertUser(params) {
-    // prepare user before insert
     var user = new User({
       name: params.name,
       email: params.email,
@@ -59,8 +62,25 @@ module.exports = {
       birth: params.birth,
       created_at: Date.now(),
     });
-
-    // insert user
     return user.save();
+  },
+  authentification : function authentification(params) {
+    return new Promise(function(resolve, reject) {
+      User.find({email: params.email}, function(err, user) {
+        if(user[0] !== undefined) {
+          bcrypt.compare(params.password, user[0]['password'], function(err, alright) {
+            if(!err) {
+               // create a token
+               var token = jwt.sign({data: user[0]}, 'clinidam', {expiresIn : '24h'});
+               resolve(token);
+            } else {
+              reject("Password doesn't match");
+            }
+          });
+        } else {
+          reject("No user found");
+        }
+      });
+    });
   }
 }
