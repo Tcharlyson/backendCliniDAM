@@ -7,6 +7,8 @@ router.use(function(req, res, next) {
 
   if (req.originalUrl === '/api/authentificate') {
     return next();
+  } else if (req.originalUrl === '/api/users/add') {
+    return next();
   }
 
   if (token) {
