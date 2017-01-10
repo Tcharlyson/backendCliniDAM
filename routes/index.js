@@ -11,6 +11,10 @@ router.use(function(req, res, next) {
     return next();
   }
 
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+
   if (token) {
       jwt.verify(token, 'clinidam', function(err, decoded) {
       if (err) {
